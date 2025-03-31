@@ -8,7 +8,7 @@ const { initStorage, saveUrl, getUrl } = require('./storage');
 const { createShortUrl, expandShortUrl } = require('./urlService');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
@@ -19,7 +19,7 @@ app.post('/api/shorten', (req, res) => {
   const { url } = req.body;
   try {
     const shortCode = createShortUrl(url);
-    res.json({ shortUrl: `http://localhost:${PORT}/${shortCode}` });
+    res.json({ shortUrl: `${req.protocol}://${req.get('host')}/${shortCode}` });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
